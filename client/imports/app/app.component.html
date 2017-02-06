@@ -1,0 +1,22 @@
+<md-sidenav-layout [class.m2app-dark]="isDarkTheme">
+
+  <md-sidenav #sidenav [mode]="sidenavMode" [opened]="sidenavOpened" class="app-sidenav">
+    Sidenav
+  </md-sidenav>
+
+  <md-toolbar color="primary">
+    <button [hidden]="menuBtnHidden" class="app-icon-button" (click)="sidenav.toggle()">
+      <i class="material-icons app-toolbar-menu">menu</i>
+    </button>
+    <div>ARC</div>
+    <span class="app-toolbar-filler"></span>
+    <button md-button (click)="isDarkTheme = !isDarkTheme">TOGGLE DARK THEME</button>
+  </md-toolbar>
+
+  <div class="app-content">
+    Devices: {{(devices | async)?.length}}
+    <device *ngFor="let dev of devices | async" [device]="dev"></device>
+
+  </div>
+
+</md-sidenav-layout>
