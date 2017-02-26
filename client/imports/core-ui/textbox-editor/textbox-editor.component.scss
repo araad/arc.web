@@ -1,0 +1,33 @@
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.hidden {
+    display: none;
+}
+
+md-icon {
+    color: #c1c1c1;
+}
+
+.small md-icon {
+    width: 20px;
+    height: 20px;
+    line-height: 8px;
+    font-size: 20px;
+}
+
+.small button {
+    width: 34px;
+    height: 34px;
+}
+
+.edit-button, .save-button {
+    margin-left: 8px;
+}
+
+md-input-container {
+    height: 30px;
+}

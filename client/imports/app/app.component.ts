@@ -1,28 +1,23 @@
-import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import { MeteorObservable } from 'meteor-rxjs';
+import { Component, ElementRef } from '@angular/core';
+import { MdDialog, MdDialogConfig } from '@angular/material';
+
+import { AddDeviceDialogComponent } from './../device/add-device-dialog/add-device-dialog.component';
 
 import template from './app.component.html';
 import style from './app.component.scss';
-
-import { Devices } from './../../../both/collections/devices.collection';
-import { DeviceProxy } from './../device/device.proxy';
 
 @Component({
   selector: 'app',
   template: template,
   styles: [style]
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent {
   name = "Test";
-  devices: Observable<any[]>;
-  devicesSub: Subscription;
   sidenavMode = 'side';
   sidenavOpened = true;
   menuBtnHidden = true;
 
-  constructor(el: ElementRef) {
+  constructor(public dialog: MdDialog, private el: ElementRef) {
     if (el.nativeElement.clientWidth < 1024) {
       this.sidenavMode = 'over';
       this.sidenavOpened = false;
@@ -30,14 +25,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
-    this.devices = Devices.find({}, {
-      transform: (doc) => new DeviceProxy(doc)
-    }).zone();
-    this.devicesSub = MeteorObservable.subscribe('allDevices').subscribe();
-  }
-
-  ngOnDestroy() {
-    this.devicesSub.unsubscribe();
+  addDeviceClick() {
+    let dialogConfig = new MdDialogConfig();
+    dialogConfig.height = '80vh';
+    let dialogRef = this.dialog.open(AddDeviceDialogComponent, dialogConfig);
   }
 }

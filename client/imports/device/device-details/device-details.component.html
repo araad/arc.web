@@ -1,0 +1,18 @@
+<md-card class="section">
+    <md-card-title class="section-title">Device</md-card-title>
+    <md-card-content>
+        <div>Name: {{device.name}}</div>
+        <div>SN: {{device.serialNumber}}</div>
+        <div>Model: {{device.modelNumber}}</div>
+        <div>Type: {{device.deviceType}}</div>
+        <div>Manuf.: {{device.manufacturer}}</div>
+        <div>Offline: {{device.offline}}</div>
+        <button md-button (click)="onDeleteClick()">Delete</button>
+    </md-card-content>
+</md-card>
+
+<md-card class="section" *ngIf="device.panelInterfaceType > 0">
+    <md-card-title class="section-title">Panel Interface</md-card-title>
+    <md-card-content>
+    </md-card-content>
+</md-card>

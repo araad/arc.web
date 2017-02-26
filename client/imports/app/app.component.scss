@@ -1,6 +1,5 @@
 :host {
   flex: 1;
-  background-color: red;
   display: flex;
   flex-direction: column;
 }
@@ -10,13 +9,12 @@ md-sidenav-layout {
 }
 
 md-sidenav-layout.m2app-dark {
-  background: black;
+  background: #616161;
 }
 
 .app-content {
   display: flex;
   flex-direction: column;
-  padding: 20px;
 }
 
 .app-content md-card {
@@ -26,10 +24,6 @@ md-sidenav-layout.m2app-dark {
 .app-sidenav {
   padding: 10px;
   width: 160px;
-}
-
-.app-content md-checkbox {
-  margin: 10px;
 }
 
 .app-toolbar-filler {

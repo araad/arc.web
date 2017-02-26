@@ -15,10 +15,13 @@ export class DeviceService extends DeviceServiceBase {
 
     @Method
     saveNameMethod(id: string, value: string) {
+        console.log("DeviceService - saveNameMethod() begin");
         // TODO: validate
+        console.log(this);
         let device = this.getDeviceDelegate(id);
         if (device) {
             device.saveName(value);
         }
+        console.log("DeviceService - saveNameMethod() end");
     }
 }

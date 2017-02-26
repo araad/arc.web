@@ -10,6 +10,7 @@ export function Method(target: any, key: string, descriptor: any) {
     // Register the method as a Meteor Method
     methodConfig[methodKey] = function (...args: any[]) {
         let instance = ServiceManager.getService(target.constructor.serviceName);
+        instance.methodObject = this;
         (<Function>descriptor.value).call(instance, ...args);
     };
     Meteor.methods(methodConfig);

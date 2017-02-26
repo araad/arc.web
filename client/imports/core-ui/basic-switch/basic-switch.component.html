@@ -1,0 +1,3 @@
+<textbox-editor [value]="label" [size]="'small'" (valueChange)="onLabelChange($event)"></textbox-editor>
+<md-slide-toggle [checked]="state" (change)="onStateChange($event.checked)"></md-slide-toggle>
+<span class="value-container">{{value | number:'1.2-2'}}</span>

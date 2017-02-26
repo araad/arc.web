@@ -1,6 +1,6 @@
 import { DeviceServiceBase } from './../../../both/services/DeviceServiceBase';
 import { IDevice } from './../../../both/models/IDevice';
-import { applyMixins } from './../../../both/core/applyMixins';
+import { IPanelInterface, PanelInterfaceType } from './../../../both/models/IPanelInterface';
 import { Method } from './../core/MethodMetadata';
 
 export class DeviceProxy extends DeviceServiceBase implements IDevice {
@@ -8,13 +8,12 @@ export class DeviceProxy extends DeviceServiceBase implements IDevice {
     name: string;
     offline: boolean;
 
-    endpoint: string;
     manufacturer: string;
     modelNumber: string;
     serialNumber: string;
     deviceType: string;
-    panelInterfaceLoaded: boolean;
-    panelInterfaceTypeId: string;
+    panelInterfaceType: PanelInterfaceType;
+    panelInterface_id: string;
 
     constructor(doc: IDevice) {
         super();

@@ -1,0 +1,7 @@
+<h2>{{title}}</h2>
+<p>{{text}}</p>
+
+<div *ngIf="buttonsType === 1" class="buttons">
+    <button md-button (click)="onCancelClick()">Cancel</button>
+    <button md-button (click)="onAcceptClick()">Ok</button>
+</div>

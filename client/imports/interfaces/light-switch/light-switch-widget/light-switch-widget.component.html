@@ -1,0 +1,5 @@
+<md-grid-list cols="2" rowHeight="150px">
+    <md-grid-tile *ngFor="let switch of panelInterface?.switches" [colspan]="1" [rowspan]="1">
+        <light-switch-module [proxy]="switch"></light-switch-module>
+    </md-grid-tile>
+</md-grid-list>

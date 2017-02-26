@@ -1,0 +1,2 @@
+<basic-switch [label]="proxy?.name || 'Power'" [state]="proxy?.state" [value]="proxy?.measuredCurrent" (stateChange)="onChange($event)"
+    (labelChange)="onNameChange($event)"></basic-switch>

@@ -3,13 +3,12 @@ export interface IDevice {
     name: string;
     offline: boolean;
 
-    endpoint: string;
     manufacturer: string;
     modelNumber: string;
     serialNumber: string;
     deviceType: string;
-    panelInterfaceLoaded: boolean;
-    panelInterfaceTypeId: string;
+    panelInterfaceType: number;
+    panelInterface_id: string;
 
     saveName(value: string);
 }

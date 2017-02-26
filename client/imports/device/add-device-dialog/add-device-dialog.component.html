@@ -1,0 +1,16 @@
+<div *ngIf="!showSpinner && !selectedNetwork" class="section">
+    <button md-button (click)="onShowNetworkListClick()">Get Network List</button>
+    <button md-button *ngFor="let ssid of ssidList" (click)="onNetworkSelect(ssid)">{{ssid}}</button>
+</div>
+
+<div *ngIf="showSpinner" class="spinner-container">
+    <md-spinner></md-spinner>
+</div>
+
+<div *ngIf="!showSpinner && selectedNetwork" class="section">
+    <div>{{selectedNetwork}}</div>
+    <md-input-container>
+        <input #textbox md-input placeholder="Wifi Password">
+    </md-input-container>
+    <button md-button (click)="onSendClick(textbox.value)">Send</button>
+</div>

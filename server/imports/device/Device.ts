@@ -1,9 +1,11 @@
 import { IDevice } from './../../../both/models/IDevice';
 import { IRegistration, IRegistrationResource } from './../connector/IRegistration';
 import { DeviceConnectorService } from './../connector/DeviceConnectorService';
+import { IResourceManager } from './../connector/IResourceManager';
+import { Devices } from './../../../both/collections/devices.collection';
 import * as moment from 'moment';
 
-export class Device implements IDevice {
+export class Device implements IDevice, IResourceManager {
     _id: string;
     name: string;
     offline: boolean;
@@ -13,30 +15,36 @@ export class Device implements IDevice {
     modelNumber: string;
     serialNumber: string;
     deviceType: string;
-    panelInterfaceLoaded: boolean;
-    panelInterfaceTypeId: string;
+    panelInterfaceType: number;
+    panelInterface_id: string;
 
     subscribe() {
-        DeviceConnectorService.putResourceSubscription(this.endpoint, "/dev/0/pi_loaded");
+        DeviceConnectorService.putResourceSubscription(this.endpoint, "/dev/0/pi_id");
     }
 
     unsubscribe() {
-        DeviceConnectorService.deleteResourceSubscription(this.endpoint, "/dev/0/pi_loaded");
+        DeviceConnectorService.deleteResourceSubscription(this.endpoint, "/dev/0/pi_id");
     }
 
     saveName(value: string) {
-        console.log(this);
+        console.log("Device - saveName() begin");
         console.log(this.name);
-        console.log(value);
+        console.trace(value);
+        if (!_.isNull(value) && !_.isUndefined(value) && _.isString(value) && value.trim().length > 2) {
+            Devices.collection.update(this._id, { $set: { name: value } });
+        } else {
+            throw new Meteor.Error("Error while saving name");
+        }
+        console.log("Device - saveName() end");
     }
 
     setCurrentTime() {
         let seconds = new Date().getTime() / 1000;
         seconds += moment().utcOffset() * 60;
-        DeviceConnectorService.putResourceValue(this.endpoint, "/dev/0/time", seconds);
+        DeviceConnectorService.postResource(this.endpoint, "/dev/0/time", seconds);
     }
 
-    static createFromDevice(doc: IDevice) {
+    static createFromDoc(doc: IDevice) {
         let dev = new Device();
 
         for (var key in doc) {
@@ -46,11 +54,10 @@ export class Device implements IDevice {
         return dev;
     }
 
-    static createFromRegistration(doc: IRegistration) {
+    static createFromResources(resources: IRegistrationResource[]) {
         let dev = new Device();
-        dev.endpoint = doc.ep;
 
-        doc.resources.forEach(res => {
+        resources.forEach(res => {
             dev.setField(res);
         });
 
@@ -58,24 +65,24 @@ export class Device implements IDevice {
     }
 
     setField(res: IRegistrationResource) {
-        let pathParts = res.path.split('/');
-        if (_.isEqual(pathParts[1], '3')) {
-            let valueParts = (<string>res.value).split('�\u0002\r');
-            this.serialNumber = valueParts[1];
-            valueParts = valueParts[0].split('�\u0001\f');
-            this.modelNumber = valueParts[1];
-            valueParts = valueParts[0].split('�\u0011\n');
-            this.deviceType = valueParts[1];
-            valueParts = valueParts[0].split('�\u0000');
-            this.manufacturer = valueParts[1];
-        } else if (_.isEqual(pathParts[1], 'dev') && _.isEqual(pathParts[3], 'pi_loaded')) {
-            this.panelInterfaceLoaded = !!parseInt(res.value);
-        } else {
-            console.log('error     ', res);
+        if (_.isEqual(typeof res.value, "string")) {
+            let pathParts = res.path.split('/');
+            if (_.isEqual(pathParts[1], '3')) {
+                let valueParts = (<string>res.value).split('�\u0002\r');
+                this.serialNumber = valueParts[1];
+                valueParts = valueParts[0].split('�\u0001\f');
+                this.modelNumber = valueParts[1];
+                valueParts = valueParts[0].split('�\u0011\n');
+                this.deviceType = valueParts[1];
+                valueParts = valueParts[0].split('�\u0000');
+                this.manufacturer = valueParts[1];
+            } else if (_.isEqual(pathParts[1], 'dev') && _.isEqual(pathParts[3], 'pi_id')) {
+                this.panelInterfaceType = parseInt(res.value);
+            }
         }
     }
 
-    static setResource() {
+    setResource(name: string, value) {
 
     }
 }

@@ -1,0 +1,17 @@
+<div class="row" [ngClass]="getDisplayClass()">
+    <span>{{value}}</span>
+    <button md-icon-button class="edit-button" (click)="onEdit(textbox)">
+        <md-icon>edit</md-icon>
+    </button>
+</div>
+<div class="row" [ngClass]="getEditClass()">
+    <md-input-container [floatingPlaceholder]="'false'">
+        <input #textbox md-input [value]="value">
+    </md-input-container>
+    <button md-icon-button class="save-button" (click)="onSave(textbox.value)">
+        <md-icon>save</md-icon>
+    </button>
+    <button md-icon-button (click)="onClose()">
+        <md-icon>close</md-icon>
+    </button>
+</div>

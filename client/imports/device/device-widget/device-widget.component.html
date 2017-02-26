@@ -1,0 +1,28 @@
+<md-card [ngClass]="device.offline ? 'disabled' : ''">
+    <div class="card-header">
+        <div>
+            <textbox-editor [value]="device.name" (valueChange)="onNameChange($event)"></textbox-editor>
+        </div>
+        <span class="spacer"></span>
+        <button md-icon-button [mdMenuTriggerFor]="menu">
+            <md-icon>more_vert</md-icon>
+        </button>
+        <md-menu #menu="mdMenu" x-position="before">
+            <button md-menu-item (click)="onMoreClick()">
+                <md-icon>more_horiz</md-icon>
+                <span>More</span>
+            </button>
+        </md-menu>
+    </div>
+    <md-card-content [ngSwitch]="device.panelInterfaceType">
+        <div *ngSwitchCase="0">
+            <span *ngIf="device.offline">Offline</span>
+            <span *ngIf="!device.offline">No Faceplate</span>
+        </div>
+        <light-switch-panel *ngSwitchCase="2" [panelInterfaceId]="device.panelInterface_id"></light-switch-panel>
+        <electrical-outlet-panel *ngSwitchCase="3" [panelInterfaceId]="device.panelInterface_id"></electrical-outlet-panel>
+        <div *ngSwitchDefault>
+            Unknown Faceplate
+        </div>
+    </md-card-content>
+</md-card>

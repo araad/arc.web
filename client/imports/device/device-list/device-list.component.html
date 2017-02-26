@@ -1,0 +1,17 @@
+<div class="section-container">
+  <div class="section-title">Online</div>
+  <div class="list-container">
+    <template ngFor let-dev="$implicit" [ngForOf]="devices | async">
+      <device-widget *ngIf="!dev.offline" [device]="dev"> </device-widget>
+    </template>
+  </div>
+</div>
+
+<div class="section-container">
+  <div class="section-title">Offline</div>
+  <div class="list-container">
+    <template ngFor let-dev="$implicit" [ngForOf]="devices | async">
+      <device-widget *ngIf="dev.offline" [device]="dev"> </device-widget>
+    </template>
+  </div>
+</div>
