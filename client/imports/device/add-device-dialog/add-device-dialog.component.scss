@@ -14,3 +14,9 @@
     flex: 1;
     align-self: center;
 }
+
+button.network-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

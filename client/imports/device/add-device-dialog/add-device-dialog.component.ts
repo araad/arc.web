@@ -8,6 +8,13 @@ import { HTTP } from 'meteor/http';
 import template from './add-device-dialog.component.html';
 import style from './add-device-dialog.component.scss';
 
+interface INetwork {
+    ssid: string;
+    signal: number;
+    mac: string;
+    security: string;
+}
+
 @Component({
     selector: 'add-device-dialog',
     template: template,
@@ -15,10 +22,10 @@ import style from './add-device-dialog.component.scss';
 })
 export class AddDeviceDialogComponent implements OnInit {
     selectedNetwork: string;
-    ssidListObservable: Observable<string[]>;
-    ssidListSubscription: Subscription;
-    ssidList: string[] = [];
+    networkList: Array<INetwork> = [];
     showSpinner = false;
+    manualEntry = false;
+    scanNetworks = false;
 
     constructor(public dialogRef: MdDialogRef<AddDeviceDialogComponent>) { }
 
@@ -31,7 +38,7 @@ export class AddDeviceDialogComponent implements OnInit {
             console.log("error", error);
 
             if (!error) {
-                this.ssidList = result.data.result;
+                this.networkList = result.data.result;
             } else {
                 alert(error);
             }
@@ -46,6 +53,18 @@ export class AddDeviceDialogComponent implements OnInit {
     onSendClick(password: string) {
         this.showSpinner = true;
         HTTP.call("PUT", "http://192.168.4.1:333?ssid=" + this.selectedNetwork + "&pswd=" + password, {
+        }, (error, result) => {
+            this.showSpinner = false;
+            this.dialogRef.close();
+            if (error) {
+                alert(error);
+            }
+        });
+    }
+
+    onManualSendClick(ssid: string, password: string) {
+        this.showSpinner = true;
+        HTTP.call("PUT", "http://192.168.4.1:333?ssid=" + ssid + "&pswd=" + password, {
         }, (error, result) => {
             this.showSpinner = false;
             this.dialogRef.close();
