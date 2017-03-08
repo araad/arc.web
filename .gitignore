@@ -1,4 +1,4 @@
-.meteor/
+.meteor/local
 node_modules/
 typings/*
 !typings/meteor.d.ts

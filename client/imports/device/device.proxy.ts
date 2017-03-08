@@ -37,4 +37,11 @@ export class DeviceProxy extends DeviceServiceBase implements IDevice {
             console.log('success', result);
         }
     }
+
+    @Method
+    callSysHangSimMethod(id: string, callback: (error, result) => void) { }
+
+    callSysHangSim() {
+        this.callSysHangSimMethod(this._id, (error, result) => console.log(error));
+    }
 }

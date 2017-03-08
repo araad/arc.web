@@ -16,6 +16,7 @@
     <md-menu #menu="mdMenu">
       <button md-menu-item (click)="addDeviceClick()">Add Device</button>
       <button md-menu-item (click)="isDarkTheme = !isDarkTheme">Toggle Theme</button>
+      <button *ngIf="apList.length > 0" md-menu-item (click)="onGeolocateClick()">Geolocate</button>
     </md-menu>
   </md-toolbar>
 

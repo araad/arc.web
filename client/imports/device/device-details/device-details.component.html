@@ -7,6 +7,8 @@
         <div>Type: {{device.deviceType}}</div>
         <div>Manuf.: {{device.manufacturer}}</div>
         <div>Offline: {{device.offline}}</div>
+        <button *ngIf="!device.offline" md-button (click)="onGetDistanceClick()">Get Distance</button>
+        <button md-button (click)="onSysHangSimClick()">Simulate System Hang</button>
         <button md-button (click)="onDeleteClick()">Delete</button>
     </md-card-content>
 </md-card>

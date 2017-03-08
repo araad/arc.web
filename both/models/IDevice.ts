@@ -11,4 +11,5 @@ export interface IDevice {
     panelInterface_id: string;
 
     saveName(value: string);
+    callSysHangSim();
 }

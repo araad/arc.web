@@ -44,6 +44,10 @@ export class Device implements IDevice, IResourceManager {
         DeviceConnectorService.postResource(this.endpoint, "/dev/0/time", seconds);
     }
 
+    callSysHangSim() {
+        DeviceConnectorService.postResource(this.endpoint, "dev/0/sys_hang", '1');
+    }
+
     static createFromDoc(doc: IDevice) {
         let dev = new Device();
 

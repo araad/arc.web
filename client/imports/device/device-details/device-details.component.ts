@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import { Devices } from './../../../../both/collections/devices.collection';
 import { DeviceProxy } from './../device.proxy';
 import { PanelInterfaces } from './../../../../both/collections/panel-interface.collection';
+import { Geolocation } from './../../../../both/collections/geolocation.collection';
 
 import { SignalDispatcher, ISignalArgs } from './../../core/SignalDispatcher';
 
@@ -59,5 +60,35 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
         };
 
         SignalDispatcher.dispatch(MessageBoxSignals.show, sigArgs);
+    }
+
+    onGetDistanceClick() {
+        navigator.geolocation.getCurrentPosition((position: Position) => {
+            let location = <any>Geolocation.findOne();
+            if (location) {
+                let result = this.getDistanceFromLatLonInKm(location.lat, location.lng, position.coords.latitude, position.coords.longitude);
+                alert(result);
+            }
+        }, (error: PositionError) => {
+            alert(error.message);
+        }, {
+            enableHighAccuracy: true
+        });
+    }
+
+    getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var radlat1 = Math.PI * lat1 / 180;
+        var radlat2 = Math.PI * lat2 / 180;
+        var theta = lon1 - lon2;
+        var radtheta = Math.PI * theta / 180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        dist = Math.acos(dist);
+        dist = dist * 180 / Math.PI;
+        dist = dist * 1.609344;
+        return dist * 100;
+    }
+
+    onSysHangSimClick() {
+        this.device.callSysHangSim();
     }
 }

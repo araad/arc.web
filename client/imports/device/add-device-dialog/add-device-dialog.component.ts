@@ -21,7 +21,7 @@ interface INetwork {
     styles: [style]
 })
 export class AddDeviceDialogComponent implements OnInit {
-    selectedNetwork: string;
+    selectedNetwork: INetwork;
     networkList: Array<INetwork> = [];
     showSpinner = false;
     manualEntry = false;
@@ -33,31 +33,46 @@ export class AddDeviceDialogComponent implements OnInit {
 
     onShowNetworkListClick() {
         this.showSpinner = true;
-        HTTP.get("http://192.168.4.1:333", (error, result) => {
-            this.showSpinner = false;
-            console.log("error", error);
-
-            if (!error) {
-                this.networkList = result.data.result;
-            } else {
-                alert(error);
-            }
-        });
+        this.scanNetworks = true;
+        this.getNetworkList();
     }
 
-    onNetworkSelect(ssid: string) {
-        console.log(ssid);
-        this.selectedNetwork = ssid;
+    getNetworkList() {
+        HTTP.get("http://192.168.4.1:333", (error, result) => this.onGetNetworkList(error, result));
+    }
+
+    onGetNetworkList(error, result) {
+        console.log("error", error);
+
+        if (!error) {
+            this.networkList = this.networkList.concat(result.data.result);
+            if (result.data.more) {
+                this.getNetworkList();
+            } else {
+                this.showSpinner = false;
+            }
+        } else {
+            console.log(error);
+        }
+    }
+
+    onGeolocateClick() {
+        
+    }
+
+    onNetworkSelect(network: INetwork) {
+        console.log(network);
+        this.selectedNetwork = network;
     }
 
     onSendClick(password: string) {
         this.showSpinner = true;
-        HTTP.call("PUT", "http://192.168.4.1:333?ssid=" + this.selectedNetwork + "&pswd=" + password, {
+        HTTP.call("PUT", "http://192.168.4.1:333?ssid=" + this.selectedNetwork.ssid + "&pswd=" + password, {
         }, (error, result) => {
             this.showSpinner = false;
-            this.dialogRef.close();
+            this.dialogRef.close(this.networkList);
             if (error) {
-                alert(error);
+                console.log(error);
             }
         });
     }
@@ -67,9 +82,9 @@ export class AddDeviceDialogComponent implements OnInit {
         HTTP.call("PUT", "http://192.168.4.1:333?ssid=" + ssid + "&pswd=" + password, {
         }, (error, result) => {
             this.showSpinner = false;
-            this.dialogRef.close();
+            this.dialogRef.close(this.networkList);
             if (error) {
-                alert(error);
+                console.log(error);
             }
         });
     }

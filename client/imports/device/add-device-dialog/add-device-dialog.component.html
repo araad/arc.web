@@ -25,7 +25,7 @@
 </div>
 
 <div *ngIf="!showSpinner && selectedNetwork" class="section">
-    <div>{{selectedNetwork}}</div>
+    <div>{{selectedNetwork.ssid}}</div>
     <md-input-container>
         <input #pswd md-input placeholder="Wifi Password">
     </md-input-container>

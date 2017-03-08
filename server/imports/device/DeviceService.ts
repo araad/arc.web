@@ -24,4 +24,16 @@ export class DeviceService extends DeviceServiceBase {
         }
         console.log("DeviceService - saveNameMethod() end");
     }
+
+    @Method
+    callSysHangSimMethod(id: string) {
+        console.log("DeviceService - callSysHangSim() begin");
+        // TODO: validate
+        console.log(this);
+        let device = this.getDeviceDelegate(id);
+        if (device) {
+            device.callSysHangSim();
+        }
+        console.log("DeviceService - callSysHangSim() end");
+    }
 }
