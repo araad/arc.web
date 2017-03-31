@@ -1,0 +1,25 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+sebm-google-map {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.sebm-google-map-container {
+  height: 100%;
+}
+
+.coords-count {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    color: white;
+}

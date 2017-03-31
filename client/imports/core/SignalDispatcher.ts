@@ -1,14 +1,8 @@
 import { EventEmitter } from '@angular/core';
 import { Meteor } from 'meteor/meteor';
 
-export interface ISignalArgs {
-    data: any;
-    callback?: Function;
-    scope?: any;
-}
-
 interface ISignal {
-    event: EventEmitter<ISignalArgs>;
+    event: EventEmitter<any>;
     handle: any;
 }
 
@@ -49,7 +43,7 @@ export namespace SignalDispatcher {
         }
     }
 
-    export function dispatch(signalName: string, args?: ISignalArgs): void {
+    export function dispatch(signalName: string, args?: any): void {
         let signal = signals.get(signalName);
 
         if (signal) {

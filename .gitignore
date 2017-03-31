@@ -3,3 +3,5 @@ node_modules/
 typings/*
 !typings/meteor.d.ts
 settings.json
+server/users.ts
+public/components/*

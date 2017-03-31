@@ -1,5 +1,5 @@
 <md-grid-list cols="2" rowHeight="150px">
     <md-grid-tile *ngFor="let outlet of panelInterface?.outlets" [colspan]="1" [rowspan]="1">
-        <electrical-outlet-module [proxy]="outlet"></electrical-outlet-module>
+        <electrical-outlet-module-widget [proxy]="outlet"></electrical-outlet-module-widget>
     </md-grid-tile>
 </md-grid-list>

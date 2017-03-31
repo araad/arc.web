@@ -14,13 +14,21 @@ export class BasicSwitchComponent implements OnInit {
     @Input() label: string;
     @Output() stateChange = new EventEmitter<Boolean>();
     @Output() labelChange = new EventEmitter<String>();
+    stateChangeTimeout: number = 0;
 
     ngOnInit() {
 
     }
 
     onStateChange(value: boolean) {
-        this.stateChange.emit(value);
+        if(this.stateChangeTimeout !== 0) {
+            Meteor.clearTimeout(this.stateChangeTimeout);
+        }
+
+        this.stateChangeTimeout = Meteor.setTimeout(() => {
+            this.stateChangeTimeout = 0;
+            this.stateChange.emit(value);
+        }, 500);
     }
 
     onLabelChange(value: string) {

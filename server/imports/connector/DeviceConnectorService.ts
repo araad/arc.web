@@ -51,11 +51,10 @@ export namespace DeviceConnectorService {
     function startLongPollingHandler(error) {
         console.log('DeviceConnectorService - startLongPolling() begin');
         if (error) {
-            console.log("Error: ");
-            console.log(error);
+            console.log("DeviceConnectorService - startLongPollingHandler() Error:", error);
         } else {
-            console.log("Success");
-            api.getEndpoints({ parameters: { type: 'test' } },
+            console.log("DeviceConnectorService - startLongPollingHandler() Success");
+            api.getEndpoints({ parameters: { type: 'arc' } },
                 Meteor.bindEnvironment((err, epObjects: Array<IEndpointObject>) => getEndpointsCallback(err, epObjects)));
         }
         console.log('DeviceConnectorService - startLongPolling() end');
@@ -65,20 +64,21 @@ export namespace DeviceConnectorService {
         console.log('DeviceConnectorService - getEndpointsCallback() begin');
         if (err) throw err;
 
-        console.log('Found', epObjects.length, 'endpoint' + (epObjects.length === 1 ? '' : 's'));
+        console.log('DeviceConnectorService - getEndpointsCallback() Found', epObjects.length, 'endpoint' + (epObjects.length === 1 ? '' : 's'));
 
         let regs = Registrations.find({}).fetch();
         let toRemove = <string[]>_.pluck(regs, 'ep');
-        console.log('existing', toRemove);
+        console.log('DeviceConnectorService - getEndpointsCallback() existing', toRemove);
         let toAdd = <string[]>_.pluck(epObjects, 'name');
-        console.log('toAdd', toAdd);
+        console.log('DeviceConnectorService - getEndpointsCallback() toAdd', toAdd);
         toRemove = _.difference(toRemove, toAdd);
-        console.log('toRemove', toRemove);
+        console.log('DeviceConnectorService - getEndpointsCallback() toRemove', toRemove);
         if (toRemove.length > 0) {
             Registrations.remove({ ep: { $in: toRemove } });
         }
 
         epObjects.forEach((epObj) => {
+            
             addRegistration(epObj.name, epObj.type);
         });
         emitter.emit("load");
@@ -91,11 +91,14 @@ export namespace DeviceConnectorService {
         let reg = Registrations.findOne({ ep: epStr }) || <IRegistration>{};
         reg.ep = epStr;
         reg.ept = epType;
+        reg.dateRegistered = new Date();
         reg.resources = getRegistrationResources(epStr);
 
         if (reg._id) {
+            console.log('DeviceConnectorService - addRegistration() registration already exists. updating...');
             Registrations.update(reg._id, { $set: reg });
         } else {
+            console.log('DeviceConnectorService - addRegistration() creating new registration...');
             Registrations.insert(reg);
         }
 
@@ -107,12 +110,12 @@ export namespace DeviceConnectorService {
     }
 
     function getResourceValueSync(epStr: string, uri: string): any {
-        console.log("wrapAsync", epStr, uri);
+        console.log("DeviceConnectorService - getResourceValueSync() [wrapAsync]", epStr, uri);
         let result;
         try {
             result = Meteor.wrapAsync(api.getResourceValue, api)(epStr, uri);
         } catch (e) {
-            console.error(epStr, uri, e);
+            console.error("DeviceConnectorService - getResourceValueSync() [ERROR]", epStr, uri, e);
         }
         return result;
     }
@@ -132,19 +135,22 @@ export namespace DeviceConnectorService {
         return regResources;
     }
 
+    let regMap = new Map<string, number>();
+
     function updateRegistration(registration: IRegistration) {
         console.log('DeviceConnectorService - updateRegistration() begin');
         let oldReg = Registrations.findOne({ ep: registration.ep });
         if (oldReg) {
-            registration.resources.forEach(newRes => {
-                let oldRes = oldReg.resources.find(res => _.isEqual(res.path, newRes.path));
-                if (!oldRes) {
-                    Registrations.update(
-                        oldReg._id,
-                        { $push: { resources: { path: newRes.path, value: newRes.value } } }
-                    );
-                }
-            });
+            let oldTimeout = regMap.get(oldReg.ep)
+            if (oldTimeout) {
+                Meteor.clearTimeout(oldTimeout);
+            }
+
+            let newTimeout = Meteor.setTimeout(() => {
+                regMap.delete(oldReg.ep);
+                addRegistration(registration.ep, registration.ept);
+            }, 2000);
+            regMap.set(oldReg.ep, newTimeout);
         }
         console.log('DeviceConnectorService - updateRegistration() end');
     }
@@ -166,13 +172,14 @@ export namespace DeviceConnectorService {
 
     function onRegistrationHandler(registration: IRegistration) {
         console.log('DeviceConnectorService - onRegistrationHandler() begin');
+        // Meteor.setTimeout(() => addRegistration(registration.ep, registration.ept), 5000);
         addRegistration(registration.ep, registration.ept);
         console.log('DeviceConnectorService - onRegistrationHandler() end');
     }
 
     function onRegUpdateHandler(regUpdate: IRegistration) {
         console.log('DeviceConnectorService - onRegUpdateHandler() begin');
-        // updateRegistration(regUpdate);
+        updateRegistration(regUpdate);
         console.log('DeviceConnectorService - onRegUpdateHandler() end');
     }
 
@@ -180,9 +187,9 @@ export namespace DeviceConnectorService {
         console.log('DeviceConnectorService - onDeRegistrationHandler() begin');
         let num = Registrations.remove({ ep: epStr });
         if (num > 0) {
-            console.log("Removed registration: ", epStr);
+            console.log("DeviceConnectorService - onDeRegistrationHandler() Removed registration: ", epStr);
         } else {
-            console.log("Can not find registration: ", epStr);
+            console.log("DeviceConnectorService - onDeRegistrationHandler() Can not find registration: ", epStr);
         }
         console.log('DeviceConnectorService - onDeRegistrationHandler() end');
     }
@@ -191,9 +198,9 @@ export namespace DeviceConnectorService {
         console.log('DeviceConnectorService - onRegistrationExpiredHandler() begin');
         let num = Registrations.remove({ ep: epStr });
         if (num > 0) {
-            console.log("Removed registration: ", epStr);
+            console.log("DeviceConnectorService - onRegistrationExpiredHandler() Removed registration: ", epStr);
         } else {
-            console.log("Can not find registration: ", epStr);
+            console.log("DeviceConnectorService - onRegistrationExpiredHandler() Can not find registration: ", epStr);
         }
         console.log('DeviceConnectorService - onRegistrationExpiredHandler() end');
     }
@@ -222,14 +229,14 @@ export namespace DeviceConnectorService {
 
     export function putResourceSubscription(epStr: string, path: string) {
         console.log('DeviceConnectorService - putResourceSubscription() begin');
-        console.log('subscribing to', epStr, path);
+        console.log('DeviceConnectorService - putResourceSubscription() subscribing to', epStr, path);
         api.getResourceSubscription(epStr, path, Meteor.bindEnvironment((error, subscribed) => {
             if (error) throw new Error(error);
 
             if (!subscribed) {
                 api.putResourceSubscription(epStr, path);
             } else {
-                console.log("***********  already subscribed! ***********");
+                console.log("DeviceConnectorService - putResourceSubscription() ****  already subscribed to ", path, " ****");
             }
         }));
         console.log('DeviceConnectorService - putResourceSubscription() end');
@@ -237,7 +244,7 @@ export namespace DeviceConnectorService {
 
     export function deleteResourceSubscription(epStr: string, path: string) {
         console.log('DeviceConnectorService - deleteResourceSubscription() begin');
-        console.log('unsubscribing from', epStr, path);
+        console.log('DeviceConnectorService - deleteResourceSubscription() unsubscribing from', epStr, path);
         api.deleteResourceSubscription(epStr, path);
         console.log('DeviceConnectorService - deleteResourceSubscription() end');
     }

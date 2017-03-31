@@ -25,11 +25,41 @@ export class ElectricalOutletModuleService extends ElectricalOutletModuleService
 
     @Method
     setNameMethod(endpoint: string, instanceId: number, value: string) {
-        console.log("LightSwitchModuleService - setNameMethod() endpoint ", endpoint, "instanceId", instanceId, "value", value);
+        console.log("ElectricalOutletModuleService - setNameMethod() endpoint ", endpoint, "instanceId", instanceId, "value", value);
         // TODO: validate
         let module = <IModule><any>this.getElectricalOutletModuleDelegate(endpoint, instanceId);
         if (module) {
             module.setName(value);
+        }
+    }
+
+    @Method
+    setAlwaysOnTriggerMethod(endpoint: string, instanceId: number, value: boolean) {
+        console.log("ElectricalOutletModuleService - setAlwaysOnTriggerMethod() endpoint ", endpoint, "instanceId", instanceId, "value", value);
+        // TODO: validate
+        let module = <IElectricalOutletModule><any>this.getElectricalOutletModuleDelegate(endpoint, instanceId);
+        if (module) {
+            module.setAlwaysOnTrigger(value);
+        }
+    }
+
+    @Method
+    setLocationTriggerMethod(endpoint: string, instanceId: number, value: boolean) {
+        console.log("ElectricalOutletModuleService - setLocationTriggerMethod() endpoint ", endpoint, "instanceId", instanceId, "value", value);
+        // TODO: validate
+        let module = <IElectricalOutletModule><any>this.getElectricalOutletModuleDelegate(endpoint, instanceId);
+        if (module) {
+            module.setLocationTrigger(value);
+        }
+    }
+
+    @Method
+    cancelOutsideAreaNotificationTimeoutMethod(endpoint: string, instanceId: number) {
+        console.log("ElectricalOutletModuleService - cancelOutsideAreaNotificationTimeoutMethod() endpoint ", endpoint, "instanceId", instanceId);
+        // TODO: validate
+        let module = <IElectricalOutletModule><any>this.getElectricalOutletModuleDelegate(endpoint, instanceId);
+        if (module) {
+            module.cancelOutsideAreaNotificationTimeout();
         }
     }
 }

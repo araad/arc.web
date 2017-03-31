@@ -1,16 +1,16 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import template from './electrical-outlet-module.component.html';
-import style from './electrical-outlet-module.component.scss';
+import template from './electrical-outlet-module-widget.component.html';
+import style from './electrical-outlet-module-widget.component.scss';
 
-import { ElectricalOutletModuleProxy } from './electrical-outlet-module.proxy';
+import { ElectricalOutletModuleProxy } from './../electrical-outlet-module.proxy';
 
 @Component({
-    selector: 'electrical-outlet-module',
+    selector: 'electrical-outlet-module-widget',
     template: template,
     styles: [style],
 })
-export class ElectricalOutletModuleComponent implements OnInit {
+export class ElectricalOutletModuleWidgetComponent implements OnInit {
     @Input() proxy: ElectricalOutletModuleProxy;
 
     ngOnInit() {

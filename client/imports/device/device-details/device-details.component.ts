@@ -6,9 +6,8 @@ import 'rxjs/add/operator/map';
 import { Devices } from './../../../../both/collections/devices.collection';
 import { DeviceProxy } from './../device.proxy';
 import { PanelInterfaces } from './../../../../both/collections/panel-interface.collection';
-import { Geolocation } from './../../../../both/collections/geolocation.collection';
 
-import { SignalDispatcher, ISignalArgs } from './../../core/SignalDispatcher';
+import { SignalDispatcher } from './../../core/SignalDispatcher';
 
 import { MessageBoxSignals, MessageBoxType, IMessageBoxArgs, MessageBoxButtonsType, MessageBoxResult } from './../../core-ui/message-box/message-box.component';
 
@@ -24,6 +23,8 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
     deviceId: string;
     paramsSub: Subscription;
     device: DeviceProxy;
+    distance: number;
+    currentLocationHandle: Meteor.LiveQueryHandle;
 
     constructor(private route: ActivatedRoute) { }
 
@@ -37,8 +38,17 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
             });
     }
 
+    updateDistance(coords: Coordinates) {
+        // let deviceLoc = Geolocation.findOne();
+        // if (deviceLoc) {
+        //     this.distance = Proximity.getDistanceFromLatLonInKm(deviceLoc.latitude, deviceLoc.longitude, coords.latitude, coords.longitude);
+        // }
+    }
+
     ngOnDestroy() {
         this.paramsSub.unsubscribe();
+
+        if(this.currentLocationHandle) this.currentLocationHandle.stop();
     }
 
     onDeleteClick() {
@@ -47,45 +57,13 @@ export class DeviceDetailsComponent implements OnInit, OnDestroy {
                 console.log('msgbox result ->', result);
             },
             title: 'Confirm delete',
-            text: 'Are you sure you want to remove this device?',
+            text1: 'Are you sure you want to remove this device?',
+            text2: '',
             type: MessageBoxType.warn,
             buttonsType: MessageBoxButtonsType.CancelAccept
         };
 
-        let sigArgs: ISignalArgs = {
-            callback: (result) => {
-                console.log('result ->', result);
-            },
-            data: msgArgs
-        };
-
-        SignalDispatcher.dispatch(MessageBoxSignals.show, sigArgs);
-    }
-
-    onGetDistanceClick() {
-        navigator.geolocation.getCurrentPosition((position: Position) => {
-            let location = <any>Geolocation.findOne();
-            if (location) {
-                let result = this.getDistanceFromLatLonInKm(location.lat, location.lng, position.coords.latitude, position.coords.longitude);
-                alert(result);
-            }
-        }, (error: PositionError) => {
-            alert(error.message);
-        }, {
-            enableHighAccuracy: true
-        });
-    }
-
-    getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        var radlat1 = Math.PI * lat1 / 180;
-        var radlat2 = Math.PI * lat2 / 180;
-        var theta = lon1 - lon2;
-        var radtheta = Math.PI * theta / 180;
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        dist = Math.acos(dist);
-        dist = dist * 180 / Math.PI;
-        dist = dist * 1.609344;
-        return dist * 100;
+        SignalDispatcher.dispatch(MessageBoxSignals.show, msgArgs);
     }
 
     onSysHangSimClick() {

@@ -1,14 +1,32 @@
 <md-sidenav-layout [class.m2app-dark]="isDarkTheme">
 
-  <md-sidenav #sidenav [mode]="sidenavMode" [opened]="sidenavOpened" class="app-sidenav">
-    ARC
+  <md-sidenav #sidenav [mode]="sidenavMode" [opened]="loggedIn && sidenavOpened" class="app-sidenav">
+    <div>
+      <md-toolbar color="primary">
+        <div>ARC</div>
+      </md-toolbar>
+      <div class="main-menu">
+        <button *ngIf="!isCordova" md-menu-item (click)="onOverviewClick()">
+          <md-icon>dashboard</md-icon>
+          <span>Overview</span>
+        </button>
+        <button md-menu-item (click)="onDevicesClick()">
+          <md-icon>developer_board</md-icon>
+          <span>Devices</span>
+        </button>
+        <!--<button md-menu-item (click)="onMapClick()">
+          <md-icon>map</md-icon>
+          <span>Map</span>
+        </button>-->
+      </div>
+    </div>
   </md-sidenav>
 
   <md-toolbar color="primary">
     <button [hidden]="menuBtnHidden" class="app-icon-button" (click)="sidenav.toggle()">
       <i class="material-icons app-toolbar-menu">menu</i>
     </button>
-    <div>Page Name</div>
+    <div>Devices</div>
     <span class="app-toolbar-filler"></span>
     <button md-icon-button [mdMenuTriggerFor]="menu">
       <md-icon>more_vert</md-icon>
@@ -16,7 +34,7 @@
     <md-menu #menu="mdMenu">
       <button md-menu-item (click)="addDeviceClick()">Add Device</button>
       <button md-menu-item (click)="isDarkTheme = !isDarkTheme">Toggle Theme</button>
-      <button *ngIf="apList.length > 0" md-menu-item (click)="onGeolocateClick()">Geolocate</button>
+      <button md-menu-item *ngIf="loggedIn" (click)="logout()">Logout</button>
     </md-menu>
   </md-toolbar>
 
@@ -25,4 +43,9 @@
   </div>
 
 </md-sidenav-layout>
-<message-box></message-box>
+
+<div *ngIf="loggedIn">
+  <message-box></message-box>
+  <proximity-tracker></proximity-tracker>
+  <triggers></triggers>
+</div>

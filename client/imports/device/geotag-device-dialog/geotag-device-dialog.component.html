@@ -1,0 +1,18 @@
+<div class="header">Geotag {{deviceName}}</div>
+
+<div class="floating-buttons">
+    <button class="" md-icon-button (click)="onGetPositionClick()">
+        <md-icon>my_location</md-icon>
+    </button>
+</div>
+<sebm-google-map [latitude]="lat" [longitude]="lng" (mapClick)="onMapClick($event.coords)" (centerChange)="onCenterChange($event)"
+    [zoom]="17">
+    <sebm-google-map-marker *ngIf="selected" [latitude]="selected.latitude" [longitude]="selected.longitude" (markerClick)="onMarkerClick()"></sebm-google-map-marker>
+    <sebm-google-map-marker *ngIf="deviceCoords" [latitude]="deviceCoords.latitude" [longitude]="deviceCoords.longitude" [iconUrl]="deviceMarkerIconUrl"></sebm-google-map-marker>
+</sebm-google-map>
+
+<div class="button-group">
+    <div class="fill"></div>
+    <button md-button (click)="onSaveClick()">Save</button>
+    <button md-button (click)="onCancelClick()">Cancel</button>
+</div>

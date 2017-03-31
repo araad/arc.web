@@ -19,6 +19,13 @@ export class DeviceListComponent implements OnInit, OnDestroy {
     devices: Observable<any[]>;
     devicesSub: Subscription;
     panelInterfacesSub: Subscription;
+    positionOptions = {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 120000
+    };
+    coords: Coordinates;
+    currentLocationHandle: Meteor.LiveQueryHandle;
 
     ngOnInit() {
         this.devices = Devices.find({}, {
@@ -30,5 +37,9 @@ export class DeviceListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.devicesSub.unsubscribe();
+
+        if (this.currentLocationHandle) this.currentLocationHandle.stop();
+
+        console.log('DeviceListComponent - ngOnDestroy()');
     }
 }

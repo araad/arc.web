@@ -5,6 +5,7 @@ import { Devices } from './../../../both/collections/devices.collection';
 import { PanelInterfaceManager } from './../panel-interface/PanelInterfaceManager';
 import { DeviceConnectorService } from './../connector/DeviceConnectorService';
 import { Mongo } from 'meteor/mongo';
+import * as moment from 'moment/moment';
 
 export class DeviceObserver {
     init = true;
@@ -12,9 +13,9 @@ export class DeviceObserver {
     constructor() {
 
         Registrations.find({}).observe({
-            added: (reg: IRegistration) => this.added(reg),
-            changed: (newReg: IRegistration, oldReg: IRegistration) => this.changed(newReg, oldReg),
-            removed: (reg: IRegistration) => this.removed(reg)
+            added: (reg: IRegistration) => this.onRegistrationAdded(reg),
+            changed: (newReg: IRegistration, oldReg: IRegistration) => this.onRegistrationChanged(newReg, oldReg),
+            removed: (reg: IRegistration) => this.onRegistrationRemoved(reg)
         });
 
         Devices.collection.find({}).observe({
@@ -26,9 +27,9 @@ export class DeviceObserver {
         this.init = false;
     }
 
-    added(reg: IRegistration) {
+    onRegistrationAdded(reg: IRegistration) {
         if (!this.init) {
-            console.log('DeviceObserver - added() begin');
+            console.log('DeviceObserver - onRegistrationAdded() begin');
 
             let regDevice = Device.createFromResources(reg.resources);
             regDevice.endpoint = reg.ep;
@@ -45,12 +46,24 @@ export class DeviceObserver {
 
             regDevice.setCurrentTime();
 
-            console.log('DeviceObserver - added() end');
+            console.log('DeviceObserver - onRegistrationAdded() end');
         }
     }
 
-    changed(newReg: IRegistration, oldReg: IRegistration) {
-        console.log('DeviceObserver - changed() begin');
+    onRegistrationChanged(newReg: IRegistration, oldReg: IRegistration) {
+        console.log('DeviceObserver - onRegistrationChanged() begin');
+
+        if (!moment(newReg.dateRegistered).isSame(oldReg.dateRegistered)) {
+            console.log('DeviceObserver - onRegistrationChanged() re-registering');
+            let regDevice = Device.createFromResources(newReg.resources);
+            if(regDevice) {
+                regDevice.endpoint = newReg.ep;
+                regDevice.setCurrentTime();
+            } else {
+                console.warn('DeviceObserver - onRegistrationChanged() cannot find device', newReg.ep);
+            }
+        }
+
         newReg.resources.forEach(newRes => {
             let oldRes = oldReg.resources.find(res => _.isEqual(res.path, newRes.path));
             if (oldRes) {
@@ -63,7 +76,16 @@ export class DeviceObserver {
                 this.setField(oldReg.ep, newRes);
             }
         });
-        console.log('DeviceObserver - changed() end');
+        console.log('DeviceObserver - onRegistrationChanged() end');
+    }
+
+    onRegistrationRemoved(reg: IRegistration) {
+        console.log('DeviceObserver - onRegistrationRemoved() begin');
+        let device = <Device>Devices.findOne({ endpoint: reg.ep });
+        if (device) {
+            Devices.update(device._id, { $set: { offline: true } });
+        }
+        console.log('DeviceObserver - onRegistrationRemoved() end');
     }
 
     setField(ep: string, res: IRegistrationResource) {
@@ -79,15 +101,6 @@ export class DeviceObserver {
             console.warn("no panelInterface_id");
         }
         console.log('DeviceObserver - setField() end');
-    }
-
-    removed(reg: IRegistration) {
-        console.log('DeviceObserver - removed() begin');
-        let device = <Device>Devices.findOne({ endpoint: reg.ep });
-        if (device) {
-            Devices.update(device._id, { $set: { offline: true } });
-        }
-        console.log('DeviceObserver - removed() end');
     }
 
     deviceAdded(dev: Device) {

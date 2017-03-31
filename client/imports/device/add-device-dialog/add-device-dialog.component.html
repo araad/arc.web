@@ -1,7 +1,110 @@
-<div *ngIf="!showSpinner && !selectedNetwork && !manualEntry && !scanNetworks" class="section">
+<div class="header">Add Device</div>
+
+<div *ngIf="!showSpinner && page === 0" class="dialog-page">
+    <div class="step">
+        <div class="step-number">1.</div>
+        <div>Hold down the main button on the device to make it discoverable.</div>
+    </div>
+    <div class="step">
+        <div class="step-number">2.</div>
+        <div>Wait for the status LED to flash 3 times in a row.</div>
+    </div>
+    <div class="step">
+        <div class="step-number">3.</div>
+        <div>Click Next.</div>
+    </div>
+    <div class="fill"></div>
+    <div class="button-group">
+        <div class="fill"></div>
+        <button md-button (click)="onNextClick()">Next</button>
+        <button md-button (click)="onCancelClick()">Cancel</button>
+    </div>
+</div>
+
+<div *ngIf="!showSpinner && page === 1" class="dialog-page">
+    <div class="step">
+        <div class="step-number">1.</div>
+        <div>
+            <div>Connect to the device's temporary network.</div>
+            <div *ngIf="isMobile">
+                <button class="step" md-button (click)="onScanQRCodeClick()">Scan QR Code</button>
+                <md-input-container floatingPlaceholder="false">
+                    SSID
+                    <input #deviceSsidInput md-input [value]="deviceSsid">
+                </md-input-container>
+                <md-input-container floatingPlaceholder="false">
+                    Password
+                    <input #devicePswdInput md-input [value]="devicePswd">
+                </md-input-container>
+            </div>
+        </div>
+    </div>
+    <div class="step">
+        <div class="step-number">2.</div>
+        <div>Click Next.</div>
+    </div>
+    <div class="fill"></div>
+    <div class="button-group">
+        <div class="fill"></div>
+        <button md-button (click)="onNextClick(deviceSsidInput?.value, devicePswdInput?.value)">Next</button>
+        <button md-button (click)="onCancelClick()">Cancel</button>
+    </div>
+</div>
+
+<div *ngIf="!showSpinner && page === 2" class="dialog-page">
+    <div class="step">
+        <div>
+            <div>Device endpoint:</div>
+            <div>{{deviceEndpoint}}</div>
+        </div>
+    </div>
+    <div class="step">
+        <div class="step-number">1.</div>
+        <div>
+            <div>Send wifi credentials</div>
+            <md-input-container>
+                <input #ssidInput md-input plaeholder="SSID">
+            </md-input-container>
+            <md-input-container>
+                <input #pswdInput md-input placeholder="Password">
+            </md-input-container>
+        </div>
+    </div>
+    <div class="step">
+        <div class="step-number">2.</div>
+        <div>Click Next.</div>
+    </div>
+    <div class="fill"></div>
+    <div class="button-group">
+        <div class="fill"></div>
+        <button md-button (click)="onNextClick(ssidInput.value, pswdInput.value)">Next</button>
+        <button md-button (click)="onCancelClick()">Cancel</button>
+    </div>
+</div>
+
+<div *ngIf="!showSpinner && page === 3" class="dialog-page">
+    <div class="step">
+        <div>
+            <div>Device endpoint:</div>
+            <div>{{deviceEndpoint}}</div>
+        </div>
+    </div>
+    <div class="step">
+        <div>
+            <div>Done. Waiting for device to be added.</div>
+        </div>
+    </div>
+    <div class="fill"></div>
+    <div class="button-group">
+        <div class="fill"></div>
+        <button md-button (click)="onCancelClick()">Close</button>
+    </div>
+</div>
+
+<!--<div *ngIf="!showSpinner && !selectedNetwork && !manualEntry && !scanNetworks" class="section">
     <button md-button (click)="onShowNetworkListClick()">Get Network List</button>
     <button md-button (click)="manualEntry = true">Enter Manually</button>
-</div>
+</div>-->
 
 <div *ngIf="showSpinner" class="spinner-container">
     <md-spinner></md-spinner>

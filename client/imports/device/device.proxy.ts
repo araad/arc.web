@@ -1,12 +1,16 @@
+import { Injectable } from '@angular/core';
+
 import { DeviceServiceBase } from './../../../both/services/DeviceServiceBase';
 import { IDevice } from './../../../both/models/IDevice';
 import { IPanelInterface, PanelInterfaceType } from './../../../both/models/IPanelInterface';
 import { Method } from './../core/MethodMetadata';
 
+@Injectable()
 export class DeviceProxy extends DeviceServiceBase implements IDevice {
     _id: string;
     name: string;
     offline: boolean;
+    coords: Coordinates;
 
     manufacturer: string;
     modelNumber: string;
@@ -36,6 +40,13 @@ export class DeviceProxy extends DeviceServiceBase implements IDevice {
         } else {
             console.log('success', result);
         }
+    }
+
+    @Method
+    geotagMethod(id: string, value: any, callback: (error, result) => void) { }
+
+    geotag(value: Coordinates, callback?: (error, result) => void) {
+        this.geotagMethod(this._id, value, callback);
     }
 
     @Method

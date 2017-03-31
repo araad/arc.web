@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="login-container">
+        <div class="title">ARC</div>
+        <md-input-container>
+            <input #usnmInput md-input placeholder="Username">
+        </md-input-container>
+        <md-input-container>
+            <input #pswdInput md-input placeholder="Password" type="password">
+        </md-input-container>
+        <div class="button-container">
+            <button md-button (click)="onLoginClick(usnmInput.value, pswdInput.value)">Login</button>
+        </div>
+        <div *ngIf="error" class="error-container">{{error}}</div>
+    </div>
+</div>

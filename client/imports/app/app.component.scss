@@ -4,6 +4,17 @@
   flex-direction: column;
 }
 
+.title {
+  font-size: 20px;
+  font-weight: 400;
+  background-color: red;
+  height: 40px;
+}
+
+.main-menu {
+  padding-top: 24px;
+}
+
 md-sidenav-layout {
   flex: 1;
 }
@@ -15,6 +26,7 @@ md-sidenav-layout.m2app-dark {
 .app-content {
   display: flex;
   flex-direction: column;
+  height: 91.55%;
 }
 
 .app-content md-card {
@@ -22,8 +34,7 @@ md-sidenav-layout.m2app-dark {
 }
 
 .app-sidenav {
-  padding: 10px;
-  width: 160px;
+  width: 180px;
 }
 
 .app-toolbar-filler {
@@ -77,8 +88,4 @@ md-sidenav-layout.m2app-dark {
 
 .app-progress {
   margin: 20px;
-}
-
-message-box {
-  display: none;
 }

@@ -7,14 +7,23 @@
         <div>Type: {{device.deviceType}}</div>
         <div>Manuf.: {{device.manufacturer}}</div>
         <div>Offline: {{device.offline}}</div>
-        <button *ngIf="!device.offline" md-button (click)="onGetDistanceClick()">Get Distance</button>
-        <button md-button (click)="onSysHangSimClick()">Simulate System Hang</button>
+        <div>Distance: {{distance | number:'1.3-3'}}</div>
+        <button *ngIf="!device.offline" md-button (click)="onSysHangSimClick()">Simulate System Hang</button>
         <button md-button (click)="onDeleteClick()">Delete</button>
     </md-card-content>
 </md-card>
 
 <md-card class="section" *ngIf="device.panelInterfaceType > 0">
     <md-card-title class="section-title">Panel Interface</md-card-title>
-    <md-card-content>
+    <md-card-content [ngSwitch]="device.panelInterfaceType">
+        <div *ngSwitchCase="0">
+            <span *ngIf="device.offline">Offline</span>
+            <span *ngIf="!device.offline">No Faceplate</span>
+        </div>
+        <electrical-outlet-panel *ngSwitchCase="1" [panelInterfaceId]="device.panelInterface_id"></electrical-outlet-panel>
+        <light-switch-panel *ngSwitchCase="2" [panelInterfaceId]="device.panelInterface_id"></light-switch-panel>
+        <div *ngSwitchDefault>
+            Unknown Faceplate
+        </div>
     </md-card-content>
 </md-card>

@@ -9,6 +9,7 @@ export class Device implements IDevice, IResourceManager {
     _id: string;
     name: string;
     offline: boolean;
+    coords: Coordinates;
 
     endpoint: string;
     manufacturer: string;
@@ -29,13 +30,25 @@ export class Device implements IDevice, IResourceManager {
     saveName(value: string) {
         console.log("Device - saveName() begin");
         console.log(this.name);
-        console.trace(value);
+        console.log(value);
         if (!_.isNull(value) && !_.isUndefined(value) && _.isString(value) && value.trim().length > 2) {
             Devices.collection.update(this._id, { $set: { name: value } });
         } else {
             throw new Meteor.Error("Error while saving name");
         }
         console.log("Device - saveName() end");
+    }
+
+    geotag(value: Coordinates) {
+        console.log("Device - geotag() begin");
+        console.log(this.coords);
+        console.log(value);
+        if (!_.isNull(value) && !_.isUndefined(value) && !_.isEmpty(value)) {
+            Devices.collection.update(this._id, { $set: { coords: value } });
+        } else {
+            throw new Meteor.Error("Error while saving Coordinates");
+        }
+        console.log("Device - geotag() end");
     }
 
     setCurrentTime() {
@@ -89,4 +102,46 @@ export class Device implements IDevice, IResourceManager {
     setResource(name: string, value) {
 
     }
+
+    checkIfOutsideArea() {
+        let users = Meteor.users.find({ 'status.online': true }).fetch();
+        let ret = true;
+
+        console.log('checking if outside area...');
+
+        // If at least one user is within the "safe" area -> return false
+        if (this.coords) {
+            users.forEach(usr => {
+                if (usr.profile.coords) {
+                    let coords = <Coordinates>usr.profile.coords;
+                    let distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, this.coords.latitude, this.coords.longitude);
+                    if (distance < 0.050) {
+                        console.log('found a user within the "safe" area');
+                        ret = false;
+                    }
+                }
+            });
+        } else {
+            ret = false;
+        }
+
+        return ret;
+    }
+}
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI / 180)
 }

@@ -1,0 +1,34 @@
+
+.chart-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.chart {
+    width: 300px;
+    height: 150px
+}
+
+electrical-outlet-module-widget {
+    margin-right: 40px;
+}
+
+md-grid-tile {
+    display: flex;
+    flex-direction: column;
+}
+
+.layout {
+    display: flex;
+}
+
+.horizontal {
+    flex-direction: row;
+}
+
+.vertical {
+    flex-direction: column;
+}

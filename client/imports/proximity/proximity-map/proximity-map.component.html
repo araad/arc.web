@@ -1,0 +1,5 @@
+<sebm-google-map [latitude]="lat" [longitude]="lng">
+    <sebm-google-map-marker [latitude]="deviceLat" [longitude]="deviceLng" label="1" (markerClick)="onDeviceMarkerClick()"></sebm-google-map-marker>
+    <sebm-google-map-marker *ngFor="let coords of coordsList" [latitude]="coords.latitude" [longitude]="coords.longitude" (markerClick)="onMarkerClick(coords)"></sebm-google-map-marker>
+</sebm-google-map>
+<div class="coords-count">{{coordsList.length}}</div>

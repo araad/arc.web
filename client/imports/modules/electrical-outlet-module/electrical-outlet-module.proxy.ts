@@ -8,9 +8,11 @@ export class ElectricalOutletModuleProxy extends ElectricalOutletModuleServiceBa
     moduleType: number;
     instanceId: number;
     endpoint: string;
+    alwaysOnTrigger: boolean;
+    locationTrigger: boolean;
 
     state: boolean;
-    measuredCurrent: number;
+    powerConsumed: number;
 
     constructor(doc: IElectricalOutletModule) {
         super();
@@ -24,9 +26,7 @@ export class ElectricalOutletModuleProxy extends ElectricalOutletModuleServiceBa
     protected setStateMethod(endpoint: string, instanceId: number, value: boolean, callback: (error, result) => void) { }
 
     public setState(value: boolean) {
-        if (this.state !== value) {
-            this.setStateMethod(this.endpoint, this.instanceId, value, (error, result) => this.onSetState(error, result));
-        }
+        this.setStateMethod(this.endpoint, this.instanceId, value, (error, result) => this.onSetState(error, result));
     }
 
     @Method
@@ -34,6 +34,27 @@ export class ElectricalOutletModuleProxy extends ElectricalOutletModuleServiceBa
 
     public setName(value: string) {
         this.setNameMethod(this.endpoint, this.instanceId, value, (error, result) => this.onSetName(error, result));
+    }
+
+    @Method
+    protected setAlwaysOnTriggerMethod(endpoint: string, instanceId: number, value: boolean, callback: (error, result) => void) { }
+
+    public setAlwaysOnTrigger(value: boolean) {
+        this.setAlwaysOnTriggerMethod(this.endpoint, this.instanceId, value, (error, result) => this.onSetAlwaysOnTrigger(error, result));
+    }
+
+    @Method
+    protected setLocationTriggerMethod(endpoint: string, instanceId: number, value: boolean, callback: (error, result) => void) { }
+
+    public setLocationTrigger(value: boolean, callback: (error, result) => void) {
+        this.setLocationTriggerMethod(this.endpoint, this.instanceId, value, (error, result) => callback(error, result));
+    }
+
+    @Method
+    protected cancelOutsideAreaNotificationTimeoutMethod(endpoint: string, instanceId: number) { }
+
+    public cancelOutsideAreaNotificationTimeout() {
+        this.cancelOutsideAreaNotificationTimeoutMethod(this.endpoint, this.instanceId);
     }
 
     private onSetState(error, result) {
@@ -45,6 +66,22 @@ export class ElectricalOutletModuleProxy extends ElectricalOutletModuleServiceBa
     }
 
     private onSetName(error, result) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('success', result);
+        }
+    }
+
+    private onSetAlwaysOnTrigger(error, result) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('success', result);
+        }
+    }
+
+    private onSetLocationTrigger(error, result) {
         if (error) {
             console.log(error);
         } else {

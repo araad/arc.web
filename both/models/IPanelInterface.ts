@@ -1,8 +1,8 @@
 export enum PanelInterfaceType {
     None = 0,
-    Test,
-    LightSwitch,
-    ElectricalOutlet
+    ElectricalOutlet,
+    MotionDetector,
+    LightSwitch
 }
 
 export interface IPanelInterface {

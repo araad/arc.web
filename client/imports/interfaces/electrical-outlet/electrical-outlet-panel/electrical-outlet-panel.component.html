@@ -1,0 +1,20 @@
+<md-grid-list [cols]="columns" rowHeight="300px">
+    <md-grid-tile *ngFor="let outlet of panelInterface?.outlets" [colspan]="1" [rowspan]="1">
+        <div class="layout vertical">
+            <div class="layout horizontal">
+                <electrical-outlet-module-widget [proxy]="outlet"></electrical-outlet-module-widget>
+                <div>
+                    <div class="">
+                        <md-slide-toggle #alwaysOnToggle [checked]="outlet.alwaysOnTrigger" (change)="onAlwaysOnCheckedChange(outlet, alwaysOnToggle)">Always On</md-slide-toggle>
+                    </div>
+                    <div class="">
+                        <md-slide-toggle #locationToggle [checked]="outlet.locationTrigger" (change)="onLocationCheckedChange(outlet, locationToggle)">Sensitive</md-slide-toggle>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart" #chart></div>
+            </div>
+        </div>
+    </md-grid-tile>
+</md-grid-list>

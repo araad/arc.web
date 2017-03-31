@@ -8,8 +8,12 @@
             <md-icon>more_vert</md-icon>
         </button>
         <md-menu #menu="mdMenu" x-position="before">
+            <button md-menu-item (click)="onGeotagClick()">
+                <md-icon>my_location</md-icon>
+                <span>Geotag</span>
+            </button>
             <button md-menu-item (click)="onMoreClick()">
-                <md-icon>more_horiz</md-icon>
+                <md-icon>open_in_new</md-icon>
                 <span>More</span>
             </button>
         </md-menu>
@@ -19,10 +23,11 @@
             <span *ngIf="device.offline">Offline</span>
             <span *ngIf="!device.offline">No Faceplate</span>
         </div>
-        <light-switch-panel *ngSwitchCase="2" [panelInterfaceId]="device.panelInterface_id"></light-switch-panel>
-        <electrical-outlet-panel *ngSwitchCase="3" [panelInterfaceId]="device.panelInterface_id"></electrical-outlet-panel>
+        <electrical-outlet-panel-widget *ngSwitchCase="1" [panelInterfaceId]="device.panelInterface_id"></electrical-outlet-panel-widget>
+        <light-switch-panel *ngSwitchCase="3" [panelInterfaceId]="device.panelInterface_id"></light-switch-panel>
         <div *ngSwitchDefault>
             Unknown Faceplate
         </div>
     </md-card-content>
+    <div>Distance: {{distance | number:'1.1-3'}} km</div>
 </md-card>

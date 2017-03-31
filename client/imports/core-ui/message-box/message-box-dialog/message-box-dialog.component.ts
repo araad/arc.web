@@ -13,7 +13,8 @@ import style from './message-box-dialog.component.scss';
 })
 export class MessageBoxDialogComponent implements OnInit {
     title: string;
-    text: string;
+    text1: string;
+    text2: string;
     buttonsType;
     icon: string;
     iconClass: string;

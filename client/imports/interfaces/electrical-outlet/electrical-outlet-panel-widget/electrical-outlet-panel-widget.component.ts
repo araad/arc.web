@@ -1,18 +1,19 @@
 import { Component, Input, OnInit, OnDestroy, SimpleChanges, SimpleChange, NgZone } from '@angular/core';
 
-import template from './electrical-outlet-widget.component.html';
-import style from './electrical-outlet-widget.component.scss';
 import { PanelInterfaces } from './../../../../../both/collections/panel-interface.collection';
 import { IPanelInterface } from './../../../../../both/models/IPanelInterface';
 import { ElectricalOutletProxy } from './../electrical-outlet.proxy';
 import { Observable } from 'rxjs/Observable';
 
+import template from './electrical-outlet-panel-widget.component.html';
+import style from './electrical-outlet-panel-widget.component.scss';
+
 @Component({
-    selector: 'electrical-outlet-panel',
+    selector: 'electrical-outlet-panel-widget',
     template: template,
     styles: [style]
 })
-export class ElectricalOutletPanelComponent implements OnInit, OnDestroy {
+export class ElectricalOutletPanelWidgetComponent implements OnInit, OnDestroy {
     @Input() panelInterfaceId: string;
     panelInterface: ElectricalOutletProxy;
     piComp: Tracker.Computation;
